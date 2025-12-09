@@ -69,5 +69,19 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user && (req.user.id || req.user._id);
+    const deletedNote = await Note.findOneAndDelete({ _id: noteId, UserId: userId });
+    res.status(200).json({ success: true, message: 'Note deleted successfully', note: deletedNote });
+  } catch (err) {
+    console.error('Error in DELETE /api/notes/:id:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
 
 export default router;

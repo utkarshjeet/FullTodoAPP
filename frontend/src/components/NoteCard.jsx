@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 
-const NoteCard = ({ note, onEdit }) => {
+const NoteCard = ({ note, onEdit, deleteNote }) => {
   const createdAt = note.createdAt ? new Date(note.createdAt).toLocaleDateString() : null
   return (
     <article className="w-full h-full p-5 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition duration-200 flex flex-col">
@@ -17,7 +17,8 @@ const NoteCard = ({ note, onEdit }) => {
                   onClick={() => onEdit(note)}>
             <FaEdit size={16} />
           </button>
-          <button aria-label="Delete note" className="p-2 rounded-md text-rose-600 hover:bg-rose-50">
+          <button aria-label="Delete note" className="p-2 rounded-md text-rose-600 hover:bg-rose-50"
+                  onClick={() => deleteNote(note._id)}>
             <FaTrash size={16} />
           </button>
         </div>

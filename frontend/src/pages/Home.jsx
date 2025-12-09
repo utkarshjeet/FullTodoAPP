@@ -104,6 +104,26 @@ const Home = () => {
       }
 
 
+      const deleteNote = async (noteId) => {
+        try {
+          const API_BASE = import.meta.env.VITE_API_URL || '';
+          const token = localStorage.getItem('token') || '';
+          const url = API_BASE ? `${API_BASE}/api/notes/${noteId}` : `/api/notes/${noteId}`;
+          const response = await axios.delete(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response?.data?.success) {
+            setNotes((prev) => prev.filter((note) => note._id !== noteId));
+          }
+        } catch (error) {
+          console.error('Error deleting note:', error);
+        }
+      }
+
+
+
   return (
     <div className='bg-gradient-to-b from-slate-50 via-white to-slate-50 min-h-screen'>
 
@@ -149,7 +169,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {notes.map((note) => (
-                <NoteCard key={note._id} note={note} onEdit={() => onEdit(note)} />
+                <NoteCard key={note._id} note={note} onEdit={() => onEdit(note)} deleteNote={() => deleteNote(note._id)}/>
                 
               ))}
             </div>
