@@ -1,0 +1,44 @@
+/* Navbar container */
+.navbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:0.75rem 1rem;
+  background:linear-gradient(90deg,#2563eb 0%,#7c3aed 100%);
+  color:#fff;
+  box-shadow: 0 4px 18px rgba(12, 28, 63, 0.25);
+}
+
+.navbar-left, .navbar-center, .navbar-right{display:flex; align-items:center}
+
+.navbar-brand{
+  font-weight:800;
+  font-size:1.125rem;
+  letter-spacing:0.3px;
+}
+
+/* Search */
+.search-form{display:flex; align-items:center; background:rgba(255,255,255,0.08); padding:6px; border-radius:10px}
+.search-input{background:transparent; border:0; outline:0; color:#fff; padding:6px 10px; min-width:220px}
+.search-input::placeholder{color:rgba(255,255,255,0.8)}
+.search-btn{background:#fff; color:#2563eb; border:none; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600}
+.search-btn:hover{opacity:0.95}
+
+/* User area */
+.navbar-user{display:flex; align-items:center; gap:0.75rem}
+.user-info{display:flex; align-items:center; gap:0.6rem}
+.user-avatar{width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff}
+.user-name{font-weight:600}
+
+.navbar-buttons .btn{margin-left:0.5rem; padding:0.45rem 0.8rem; border-radius:8px; border:none; cursor:pointer; font-weight:600}
+.btn-login{background:#fff; color:#2563eb}
+.btn-signup{background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.18)}
+.btn-logout{background:#ef4444; color:#fff; padding:0.45rem 0.75rem; border-radius:8px; border:none}
+
+/* Responsive */
+@media (max-width:720px){
+  .search-input{min-width:120px}
+  .navbar{padding:0.5rem}
+  .user-name{display:none}
+}
