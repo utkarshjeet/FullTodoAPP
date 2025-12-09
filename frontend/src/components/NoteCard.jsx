@@ -14,7 +14,7 @@ const NoteCard = ({ note, onEdit }) => {
         <div className="text-xs text-slate-400">{createdAt}</div>
         <div className="flex items-center space-x-3">
           <button aria-label="Edit note" className="p-2 rounded-md text-sky-600 hover:bg-sky-50"
-                  onClick={() => onEdit(note._id)}>
+                  onClick={() => onEdit(note)}>
             <FaEdit size={16} />
           </button>
           <button aria-label="Delete note" className="p-2 rounded-md text-rose-600 hover:bg-rose-50">

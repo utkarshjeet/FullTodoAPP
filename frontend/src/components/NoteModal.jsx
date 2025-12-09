@@ -8,6 +8,9 @@ const NoteModal = ({ closeModal, addNote, currentNoteId }) => {
         if (currentNoteId) {    
             setTitle(currentNoteId.title || '' );
             setDescription(currentNoteId.description || '');
+        } else {
+            setTitle('');
+            setDescription('');
         }
     }, [currentNoteId]);
 

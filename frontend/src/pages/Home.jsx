@@ -10,7 +10,7 @@ const Home = () => {
       const [notes, setNotes] = React.useState([]);
       const [currentNoteId, setCurrentNoteId] = React.useState(null);
       const navigate = useNavigate();
-
+ 
       const fetchNotes = async () => {
         try {
           const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -36,10 +36,12 @@ const Home = () => {
 
       const closeModal = () => {
         setIsmodal(false);
+        setCurrentNoteId(null);
       }
 
-      const onEdit = (noteId) => {
-        setCurrentNoteId(noteId);
+      const onEdit = (note) => {
+        // store full note so modal can prefill fields
+        setCurrentNoteId(note);
         setIsmodal(true);
       }
 
@@ -49,6 +51,31 @@ const Home = () => {
       const addNote = async (title, description) => {
         try {
           const API_BASE = import.meta.env.VITE_API_URL || '';
+          const token = localStorage.getItem('token') || '';
+
+          // when editing, hit update endpoint
+          if (currentNoteId?._id) {
+            const url = API_BASE ? `${API_BASE}/api/notes/${currentNoteId._id}` : `/api/notes/${currentNoteId._id}`;
+            const response = await axios.put(
+              url,
+              { title, description },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (response?.data?.success && response.data.note) {
+              const updated = response.data.note;
+              setNotes((prev) => prev.map((note) => (note._id === updated._id ? updated : note)));
+              closeModal();
+              return;
+            }
+          }
+
+          // default: add new note
           const url = API_BASE ? `${API_BASE}/api/notes/add` : '/api/notes/add';
           const response = await axios.post(
             url,
@@ -56,7 +83,7 @@ const Home = () => {
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+                Authorization: `Bearer ${token}`,
               },
             }
           );
@@ -94,7 +121,10 @@ const Home = () => {
 
      
       <button
-        onClick={() => setIsmodal(true)}
+        onClick={() => {
+          setCurrentNoteId(null);
+          setIsmodal(true);
+        }}
         aria-label="Add note"
         className="fixed right-6 bottom-6 w-16 h-16 rounded-full flex items-center justify-center text-white font-extrabold text-3xl
                    bg-gradient-to-br from-teal-400 to-cyan-500 shadow-2xl ring-4 ring-teal-300/30
@@ -119,7 +149,7 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {notes.map((note) => (
-                <NoteCard key={note._id} note={note} onEdit={() => onEdit(note._id)} />
+                <NoteCard key={note._id} note={note} onEdit={() => onEdit(note)} />
                 
               ))}
             </div>

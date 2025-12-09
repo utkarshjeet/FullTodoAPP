@@ -41,5 +41,33 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+// Update note
+router.put('/:id', authMiddleware, async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    const userId = req.user && (req.user.id || req.user._id);
+    const noteId = req.params.id;
+
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: 'Title and description are required' });
+    }
+
+    const updatedNote = await Note.findOneAndUpdate(
+      { _id: noteId, UserId: userId },
+      { title, description },
+      { new: true }
+    );
+
+    if (!updatedNote) {
+      return res.status(404).json({ success: false, message: 'Note not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Note updated successfully', note: updatedNote });
+  } catch (err) {
+    console.error('Error in PUT /api/notes/:id:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 
 export default router;
