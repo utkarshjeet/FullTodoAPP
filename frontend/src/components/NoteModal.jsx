@@ -1,8 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const NoteModal = ({ closeModal, addNote }) => {
+const NoteModal = ({ closeModal, addNote, currentNoteId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+
+    useEffect(() => {
+        if (currentNoteId) {    
+            setTitle(currentNoteId.title || '' );
+            setDescription(currentNoteId.description || '');
+        }
+    }, [currentNoteId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +41,7 @@ const NoteModal = ({ closeModal, addNote }) => {
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg shadow-inner">N</div>
                         <div>
-                            <h2 className="text-2xl font-extrabold">Add New Note</h2>
+                            <h2 className="text-2xl font-extrabold">{currentNoteId ? 'Edit Note' : 'Add New Note'}</h2>
                             <p className="text-sm text-slate-500">Capture your idea quickly — it’s saved to your notes.</p>
                         </div>
                     </div>
@@ -63,7 +70,7 @@ const NoteModal = ({ closeModal, addNote }) => {
 
                     <div className="flex items-center justify-end gap-3">
                         <button onClick={handleCancel} className="px-4 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100">Cancel</button>
-                        <button type="submit" className="px-5 py-2 rounded-md text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-500 shadow-md hover:scale-[1.02] transform transition">Save Note</button>
+                        <button type="submit" className="px-5 py-2 rounded-md text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-500 shadow-md hover:scale-[1.02] transform transition">{currentNoteId ? 'Edit Note' : 'Save Note'}</button>
                     </div>
                 </form>
             </div>

@@ -8,6 +8,8 @@ const Home = () => {
 
       const [ismodal, setIsmodal] = React.useState(false);
       const [notes, setNotes] = React.useState([]);
+      const [currentNoteId, setCurrentNoteId] = React.useState(null);
+      const navigate = useNavigate();
 
       const fetchNotes = async () => {
         try {
@@ -35,6 +37,14 @@ const Home = () => {
       const closeModal = () => {
         setIsmodal(false);
       }
+
+      const onEdit = (noteId) => {
+        setCurrentNoteId(noteId);
+        setIsmodal(true);
+      }
+
+
+
 
       const addNote = async (title, description) => {
         try {
@@ -97,7 +107,7 @@ const Home = () => {
       </button>
 
       {/* Modal mount */}
-      {ismodal && <NoteModal closeModal={closeModal} addNote={addNote} />}
+      {ismodal && <NoteModal closeModal={closeModal} addNote={addNote} currentNoteId={currentNoteId} />}
 
       {/* Page content */}
       <main className="p-8">
@@ -109,7 +119,8 @@ const Home = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {notes.map((note) => (
-                <NoteCard key={note._id} note={note} />
+                <NoteCard key={note._id} note={note} onEdit={() => onEdit(note._id)} />
+                
               ))}
             </div>
           )}
