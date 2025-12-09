@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import axios from 'axios';
+import NoteCard from '../components/NoteCard';
 import { useNavigate } from 'react-router-dom';
 import NoteModal from '../components/NoteModal';
 
@@ -7,14 +8,27 @@ const Home = () => {
 
       const [ismodal, setIsmodal] = React.useState(false);
       const [notes, setNotes] = React.useState([]);
-      const navigate = useNavigate();
+
+      const fetchNotes = async () => {
+        try {
+          const API_BASE = import.meta.env.VITE_API_URL || '';
+          const url = API_BASE ? `${API_BASE}/api/notes` : '/api/notes';
+          const token = localStorage.getItem('token') || '';
+          const { data } = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setNotes(data.notes || []);
+        } catch (error) {
+          console.error('Error fetching notes:', error);
+        }
+      };
 
       useEffect(() => {
-        const fetchNotes = async () => {
-          try {
-            cosnt { data } = await axios.get('/api/notes', {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        fetchNotes();
+      }, []);
+
 
 
 
@@ -38,6 +52,13 @@ const Home = () => {
           );
 
           if (response?.data?.success) {
+            const created = response.data.note;
+            if (created) {
+              setNotes((prev) => [created, ...prev]);
+            } else {
+              // fallback: re-fetch notes if server didn't return the created note
+              await fetchNotes();
+            }
             closeModal();
           }
         } catch (error) {
@@ -47,9 +68,21 @@ const Home = () => {
 
 
   return (
-    <div className='bg-gray-50 min-h-screen'>
+    <div className='bg-gradient-to-b from-slate-50 via-white to-slate-50 min-h-screen'>
 
-      {/* F loating+ button */}
+      <header className="bg-white/60 backdrop-blur-md py-6 shadow-sm">
+        <div className="container mx-auto px-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-extrabold text-slate-800">Your Notes</h1>
+            <p className="text-sm text-slate-500">Quickly save ideas, todos, and thoughts.</p>
+          </div>
+          <div className="text-sm text-slate-600">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</div>
+        </div>
+      </header>
+
+
+
+     
       <button
         onClick={() => setIsmodal(true)}
         aria-label="Add note"
@@ -64,14 +97,23 @@ const Home = () => {
       </button>
 
       {/* Modal mount */}
-      {ismodal && <NoteModal closeModal={closeModal} 
-      addNote={addNote}
-      />}
+      {ismodal && <NoteModal closeModal={closeModal} addNote={addNote} />}
 
       {/* Page content */}
       <main className="p-8">
-        <h1 className="text-4xl font-extrabold mb-4">Welcome to Pad</h1>
-        <p className="text-lg text-gray-600">Capture ideas quickly — click the + to add a note.</p>
+        <div className="container mx-auto">
+          {notes.length === 0 ? (
+            <div className="py-20 text-center text-slate-500">
+              <p className="text-lg">No notes yet — click the + button to add one.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {notes.map((note) => (
+                <NoteCard key={note._id} note={note} />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   )
