@@ -8,6 +8,7 @@ import Navbar from './components/Navbar'
 
 function App() {
   const [user, setUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     try {
@@ -32,17 +33,20 @@ function App() {
     return () => window.removeEventListener('user-changed', onUserChanged);
   }, []);
 
+  const handleSearch = (value) => setSearchQuery(value);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setSearchQuery('');
   };
 
   return (
     <BrowserRouter>
-      <Navbar user={user} onLogout={handleLogout} brand="Pad" />
+      <Navbar user={user} onLogout={handleLogout} onSearch={handleSearch} brand="Pad" />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home searchQuery={searchQuery} />} />
         <Route path="/register" element={<Signup />} />
         <Route path="/login" element={<Login />} />
       </Routes>

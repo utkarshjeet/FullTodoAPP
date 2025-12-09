@@ -4,7 +4,6 @@ import './Navbar.css';
 
 const Navbar = ({ user = null, onLogin, onLogout, onSignup, onSearch, brand = 'Pad' }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleSearch = (e) => {
@@ -39,9 +38,10 @@ const Navbar = ({ user = null, onLogin, onLogout, onSignup, onSearch, brand = 'P
                         className="search-input"
                         type="text"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search notes, users, and tags..."
                         aria-label="Search"
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                       
                     />
                     <button className="search-btn" type="submit">Search</button>
                 </form>

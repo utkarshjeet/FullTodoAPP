@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import NoteCard from '../components/NoteCard';
-import { useNavigate } from 'react-router-dom';
 import NoteModal from '../components/NoteModal';
 
-const Home = () => {
+const Home = ({ searchQuery = '' }) => {
 
-      const [ismodal, setIsmodal] = React.useState(false);
-      const [notes, setNotes] = React.useState([]);
-      const [currentNoteId, setCurrentNoteId] = React.useState(null);
-      const navigate = useNavigate();
+
+      const [filteredNotes, setFilteredNotes] = useState([]);
+
+      const [ismodal, setIsmodal] = useState(false);
+      const [notes, setNotes] = useState([]);
+      const [currentNoteId, setCurrentNoteId] = useState(null);
  
       const fetchNotes = async () => {
         try {
@@ -31,7 +32,22 @@ const Home = () => {
         fetchNotes();
       }, []);
 
+      useEffect(() => {
+        const normalizedQuery = (searchQuery || '').trim().toLowerCase();
 
+        if (!normalizedQuery) {
+          setFilteredNotes(notes);
+          return;
+        }
+
+        const filtered = notes.filter((note) => {
+          const title = (note?.title || '').toLowerCase();
+          const description = (note?.description || '').toLowerCase();
+          return title.includes(normalizedQuery) || description.includes(normalizedQuery);
+        });
+
+        setFilteredNotes(filtered);
+      }, [searchQuery, notes]);
 
 
       const closeModal = () => {
@@ -40,7 +56,6 @@ const Home = () => {
       }
 
       const onEdit = (note) => {
-        // store full note so modal can prefill fields
         setCurrentNoteId(note);
         setIsmodal(true);
       }
@@ -168,10 +183,9 @@ const Home = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {notes.map((note) => (
+              {filteredNotes.length > 0 ? filteredNotes.map((note) => (
                 <NoteCard key={note._id} note={note} onEdit={() => onEdit(note)} deleteNote={() => deleteNote(note._id)}/>
-                
-              ))}
+                )) : <p>No notes found</p>}
             </div>
           )}
         </div>
